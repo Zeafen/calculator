@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="clear_button_txt">C</string>
+    <string name="scope_button_txt">()</string>
+    <string name="percentage_button_txt">%</string>
+    <string name="divide_button_txt">÷</string>
+    <string name="multiply_button_txt">×</string>
+    <string name="minus_button_txt">-</string>
+    <string name="plus_button_txt">+</string>
+    <string name="reverse_button_txt">+/-</string>
+    <string name="dot_button_txt">,</string>
+    <string name="result_button_txt">=</string>
+    <string name="nine_button_txt">9</string>
+    <string name="eight_button_txt">8</string>
+    <string name="seven_button_txt">7</string>
+    <string name="six_button_txt">6</string>
+    <string name="five_button_txt">5</string>
+    <string name="four_button_txt">4</string>
+    <string name="three_button_txt">3</string>
+    <string name="two_button_txt">2</string>
+    <string name="one_button_txt">1</string>
+    <string name="zero_button_txt">0</string>
+</resources>
