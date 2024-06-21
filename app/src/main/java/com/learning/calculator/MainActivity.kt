@@ -24,19 +24,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         variables = mutableListOf()
         operations = mutableListOf()
+        formula = ""
 
         binding.apply {
 
             this.buttonClear.setOnClickListener {
-                formula = ""
                 operations.clear()
                 variables.clear()
                 result = null
+                formula = ""
                 this.textViewFormula.text = formula
                 this.textViewResult.text = ""
             }
             this.buttonDelete.setOnClickListener{
-                formula.replaceRange(formula.lastIndex, formula.lastIndex+1, "")
+                if(formula.isNotEmpty()) {
+                    formula = formula.replaceRange(formula.lastIndex, formula.lastIndex + 1, "")
+                    updateUi()
+                }
             }
 
             this.buttonScope.setOnClickListener{
@@ -91,10 +95,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             this.buttonPercentage.setOnClickListener{
-                if(Actions.entries.any{ a -> a.actionTxt == formula.last().toString() })
-                    Toast.makeText(applicationContext, "Invalid operation", Toast.LENGTH_SHORT).show()
-                else formula += "%"
-                updateUi()
+                if(formula.isNotEmpty()) {
+                    if (Actions.entries.any { a -> a.actionTxt == formula.last().toString() })
+                        Toast.makeText(applicationContext, "Invalid operation", Toast.LENGTH_SHORT)
+                            .show()
+                    else formula += "%"
+                    updateUi()
+                }
             }
 
             this.buttonDivide.setOnClickListener{
@@ -229,13 +236,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        formula = ""
         formula = savedInstanceState.getString("formula") ?: "0.0"
         super.onRestoreInstanceState(savedInstanceState)
+        updateUi()
     }
 
     private fun updateOperations(operation : Actions) {
-        if (formula.isEmpty())
+        if (formula.isEmpty()){
             Toast.makeText(applicationContext, "Invalid operation", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (Actions.entries.any { a ->
                 a != Actions.ScopeEnd && a != Actions.Percentage &&
                         a.actionTxt == formula.last().toString()
@@ -393,7 +404,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 Actions.entries.any { a -> a.actionTxt == formula[index].toString() } -> {
                     if(formula[index] == '%' && Actions.entries.any { a -> a.actionTxt != formula[index-1].toString() }){
-                        variables[variables.lastIndex] = variables.last() / 100
+                        variables[variables.lastIndex] = variables.last()/100
                         ++index
                         continue
                     }
@@ -407,7 +418,11 @@ class MainActivity : AppCompatActivity() {
                         number += formula[index]
                         ++index
                     }
-                    variables.add(number.toDouble())
+                    val percentInd = formula.indexOfLast { ch -> ch.toString() == Actions.Percentage.actionTxt }
+                    if(percentInd != -1 && index - percentInd == number.length+1)
+                        variables[variables.lastIndex] = variables.last() * number.toDouble()
+                    else
+                        variables.add(number.toDouble())
                     number = ""
                 }
             }
